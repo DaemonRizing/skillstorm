@@ -5,13 +5,17 @@ import static org.junit.Assert.fail;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import beans.Home;
 import data.HomeDAO;
 
 
@@ -38,19 +42,9 @@ public class DAOTest {
 	}
 	
 	@Test
-	public void saveTest() {
-		try(Connection conn = DriverManager.getConnection(url, user, password)) {
-			String sql = "INSERT INTO HOME(ADDRESS, SQ_FT, ROOMS, BATHROOMS, PRICE) VALUES (?, ?, ?, ?, ?)";
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			
-			dao.save(new Home());
-			
-			stmt.setString(1, "1111 dis way");
-			stmt.setInt(2, 2200);
-			stmt.setInt(3, 5);
-			stmt.setInt(4, 2);
-			stmt.setInt(5, 330000);
-			stmt.executeUpdate();
+	public void saveTest(){
+		try {
+			dao.save(new Home(10, "1111 dis way", 2200, 5, 2, 330000));
 			System.out.println("Home saved");
 		}catch (Exception e){
 			fail();
@@ -59,17 +53,33 @@ public class DAOTest {
 	
 	@Test
 	public void updateTest() {
-		
+		try {
+			dao.update(new Home(10, "2365 dat way", 1550, 2, 1, 120000));
+			System.out.println("Home updated");
+		}catch (Exception e){
+			fail();
+		}
 	}
 	
 	@Test
 	public void findAllTest() {
-		
+		try {
+			List<Home> hm = new LinkedList<>();
+			hm = dao.findAll();
+			System.out.println(hm);
+		}catch (Exception e){
+			fail();
+		}
 	}
 	
 	@Test
 	public void deleteTest() {
-		
+		try {
+			dao.delete(10);
+			System.out.println("Home deleted");
+		}catch (Exception e){
+			fail();
+		}
 	}
 	
 	@After
