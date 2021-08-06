@@ -1,0 +1,178 @@
+<html>
+    <head>
+        <title>HomeBuyer</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <link rel="stylesheet" href="styles.css">
+        <style>
+            #home-list {
+                background-color: #f0f4f7;
+            }
+            .box {
+                padding: 50px;
+            }
+            .submit-button {
+                background-color: #f78f20;
+                border: none;
+            } 
+            body{
+            	background-color: #d3d3d3;
+            }
+            button{
+            	background-color: #ffa500;
+            	margin: 2px;
+            	border: none;
+            	color: white;
+            }
+        </style>
+        <script>
+            var house = {};
+            const newBut = (tag, prop) => Object.assign(document.createElement(tag), prop);
+            document.addEventListener("DOMContentLoaded", function(){
+            	
+            	var homes = [];
+            	var xhr = new XMLHttpRequest();
+            	xhr.open("GET", "homes");
+            	xhr.onreadystatechange = function(){
+            		if(xhr.readyState === 4){
+            			JSON.parse(xhr.responseText).forEach(element => {
+            				homes.push(element);
+            				updateTable(element);
+            			});
+            		}
+            	}
+            	xhr.send();
+            	
+                document.getElementById("new-home").addEventListener("submit", function(e){
+                e.preventDefault();
+                var add = document.getElementById("address").value;
+                var sqft = document.getElementById("sqft").value;
+                var rm = document.getElementById("rooms").value;
+                var brm = document.getElementById("bath").value;
+                var pri = document.getElementById("price").value;
+                house = {address: add, sqft: sqft, rooms: rm, bath: brm, price: pri};
+                console.log(house);
+
+                var xhrPost = new XMLHttpRequest();
+                xhrPost.open("POST", "homes");
+                xhrPost.onreadystatechange = function(){
+                	if(xhrPost.readyState === 4){
+                		updateTable(house);
+                		document.getElementById("address").value = null;
+                		document.getElementById("sqft").value = null;
+                		document.getElementById("rooms").value = null;
+                		document.getElementById("bath").value = null;
+                		document.getElementById("price").value = null;
+                	}
+                }
+             	xhrPost.send(JSON.stringify(house));
+             	location.reload();
+                });
+                
+            });
+            
+            var updateHome = function(home){
+            	var add = document.getElementById("address").value;
+                var sqft = document.getElementById("sqft").value;
+                var rm = document.getElementById("rooms").value;
+                var brm = document.getElementById("bath").value;
+                var pri = document.getElementById("price").value;
+                house = {id: home.id, address: add, sqft: sqft, rooms: rm, bath: brm, price: pri};
+               
+                var xhrUpdate = new XMLHttpRequest();
+                xhrUpdate.open("PUT", "homes");
+                xhrUpdate.onreadystatechange = function(){
+                	if(xhrUpdate.readyState === 4){
+                		document.getElementById("address").value = null;
+                		document.getElementById("sqft").value = null;
+                		document.getElementById("rooms").value = null;
+                		document.getElementById("bath").value = null;
+                		document.getElementById("price").value = null;
+                	}
+                }
+                xhrUpdate.send(JSON.stringify(house));
+             	location.reload();
+            }
+            
+            var deleteHome = function(home){
+            	 house = {id: home.id};
+            	var xhrDelete = new XMLHttpRequest();
+            	xhrDelete.open("DELETE", "homes");
+            	xhrDelete.onreadystatechange = function(){
+            		if(xhrDelete.readyState === 4){
+            		console.log("DELETED HOME");
+            		}
+            	}
+            	xhrDelete.send(JSON.stringify(house));
+            	location.reload();
+            }
+            
+            var updateTable = function(home){
+                var row = document.createElement("TR");
+                var addressColumn = document.createElement("TD");
+                var sqftColumn = document.createElement("TD");
+                var roomsColumn = document.createElement("TD");
+                var bathroomsColumn = document.createElement("TD");
+                var priceColumn = document.createElement("TD");
+                var deleteButton = newBut("button", {textContent: "Delete", onclick() {deleteHome(document.getElementById(home.id));},});
+                var editButton = newBut("button", {textContent: "Update", onclick() {updateHome(document.getElementById(home.id));},});
+                row.id=home.id;
+                addressColumn.innerText = home.address;
+                sqftColumn.innerText = home.sqft;
+                roomsColumn.innerText = home.rooms;
+                bathroomsColumn.innerText = home.bath;
+                priceColumn.innerText = home.price;
+                row.appendChild(addressColumn);
+                row.appendChild(sqftColumn);
+                row.appendChild(roomsColumn);
+                row.appendChild(bathroomsColumn);
+                row.appendChild(priceColumn);
+                row.appendChild(editButton);
+                row.appendChild(deleteButton);
+                document.getElementById("home-table").appendChild(row);
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div><h1>HomeBuyer App</h1></div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <h2>Add Home</h2>
+                    <form id="new-home" action="#">
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input class="form-control" id="address" type="text" />
+                        </div>
+                        <div class="form-group">
+                            <label>SqFt</label>
+                            <input class="form-control" id="sqft" type="number" />
+                        </div>
+                          <div class="form-group">
+                            <label>Rooms</label>
+                            <input class="form-control" id="rooms" type="number" />
+                        </div>
+                          <div class="form-group">
+                            <label>Bathrooms</label>
+                            <input class="form-control" id="bath" type="number" />
+                        </div>
+                          <div class="form-group">
+                            <label>Price</label>
+                            <input class="form-control" id="price" type="number" />
+                        </div>
+                        <div>
+                            <input class="btn btn-primary submit-button" type="submit" value="Save" />
+                        </div>
+                    </form>
+                </div>
+                <div id="home-list" class="col-lg-8">
+                    <h2>View All Homes</h2>
+                    <table id="home-table" class="table table-bordered" style="height:200px;overflow:auto;">
+                        <tr><th>Address</th><th>SqFt</th><th>Rooms</th><th>Bathrooms</th><th>Price</th></tr>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </body>
+</html>
