@@ -25,7 +25,7 @@ public class DAOTest {
 	private final static String user = "root";
 	private final static String password = "root";
 	
-	HomeDAO dao = new HomeDAO();
+	
 	
 	@Before
 	public void beforeTest() {
@@ -44,7 +44,8 @@ public class DAOTest {
 	@Test
 	public void saveTest(){
 		try {
-			dao.save(new Home(10, "1111 dis way", 2200, 5, 2, 330000));
+			HomeDAO dao = new HomeDAO();
+			dao.save(new Home(0, "1111 dis way", 2200, 5, 2, 330000));
 			System.out.println("Home saved");
 		}catch (Exception e){
 			fail();
@@ -54,7 +55,8 @@ public class DAOTest {
 	@Test
 	public void updateTest() {
 		try {
-			dao.update(new Home(10, "2365 dat way", 1550, 2, 1, 120000));
+			HomeDAO dao = new HomeDAO();
+			dao.update(new Home(1, "2365 dat way", 1550, 2, 1, 120000));
 			System.out.println("Home updated");
 		}catch (Exception e){
 			fail();
@@ -64,6 +66,7 @@ public class DAOTest {
 	@Test
 	public void findAllTest() {
 		try {
+			HomeDAO dao = new HomeDAO();
 			List<Home> hm = new LinkedList<>();
 			hm = dao.findAll();
 			System.out.println(hm);
@@ -75,7 +78,8 @@ public class DAOTest {
 	@Test
 	public void deleteTest() {
 		try {
-			dao.delete(10);
+			HomeDAO dao = new HomeDAO();
+			dao.delete(1);
 			System.out.println("Home deleted");
 		}catch (Exception e){
 			fail();

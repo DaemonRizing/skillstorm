@@ -17,8 +17,9 @@ public class HomeDAO implements HomeDAOInterface, AutoCloseable{
 	private final static String password = "root";
 	
 	private Connection connection;
-	
+
 	public HomeDAO() throws Exception{
+		super();
 		connect();
 	}
 	
@@ -42,7 +43,7 @@ public class HomeDAO implements HomeDAOInterface, AutoCloseable{
 	@Override
 	public boolean save(Home home) throws SQLException {
 		try(Connection conn = DriverManager.getConnection(url, user, password)) {
-			String sql = "INSERT INTO HOMES(ADDRESS, SQ_FT, ROOMS, BATHROOMS, PRICE) VALUES (?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO HOME(ADDRESS, SQ_FT, ROOMS, BATHROOMS, PRICE) VALUES (?, ?, ?, ?, ?)";
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, home.getAddress());
 			stmt.setInt(2, home.getSqft());
